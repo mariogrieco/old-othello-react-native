@@ -1,9 +1,9 @@
 import React from 'react'
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
-  ImageBackground 
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground
 } from 'react-native'
 
 function Layout (props) {
@@ -11,9 +11,9 @@ function Layout (props) {
 
   return (
     <View style={styles.layout}>
-      <ImageBackground 
-        style={styles.ImageBackground} 
-        source={require('../../../assets/images/wallpaper-menu.jpg')} 
+      <ImageBackground
+        style={styles.ImageBackground}
+        source={require('../../../assets/images/wallpaper-menu-optimized.jpg')}
       >
       </ImageBackground>
       <Text style={styles.title}>{title}</Text>
@@ -46,4 +46,3 @@ const styles = StyleSheet.create({
 })
 
 export default Layout
-

@@ -1,16 +1,20 @@
 import React, { Component } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import Layout from '../../Menu/components/Layout'
+import { Actions }  from 'react-native-router-flux'
 import Option from '../../Menu/components/Option'
+import EnterName from '../EnterName'
 
 class DifficultySelect extends Component {
+
+  handleAction = () => {
+    Actions.EnterName({id: 'Easy'})
+  }
+
   render () {
     return (
       <Layout title='Difficulty Select'>
-        <Option text='Easy' />
-        <Option text='Normal' />
-        <Option text='Veteran' />
-        <Option text='Enginer' disabled/>
+        <Option text='Easy' handlePress={this.handleAction}/>
       </Layout>
     )
   }
