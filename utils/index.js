@@ -110,200 +110,165 @@ function printState (Board) {
 function eat (Board, col, row, chip_name_a = 'B ') {
   let size = Board.get('size')
   let state = Board.get('state')
+  let chip_name_b = changeRound(chip_name_a)
   let band = true
   let tempCol = col
   let tempRow = row
 
-  // dere vertical
-  while (tempCol < size && band) {
-    tempCol++
-    if ( state.getIn([tempCol, row]) !== '0 ' && state.getIn([tempCol, row]) !== chip_name_a ) {
-      band = true
-    }
-    else {
-      if (state.getIn([tempCol, row]) !== chip_name_a) {
-        band = false
-      }
-      break;
-    }
-  }
-  if (band) {
-    while (tempCol > col) {
-      tempCol--;
-      state = state.setIn([tempCol, row], chip_name_a)
-    }
-  }
-
-  // arriba vertical
-  band = true
-  tempCol = col
+  // horizontar para atras
   tempRow = row
-  while (tempCol >= 0 && band) {
-    tempCol--
-    if ( state.getIn([tempCol, row]) !== '0 ' && state.getIn([tempCol, row]) !== chip_name_a ) {
-      band = true
-    }
-    else {
-      if (state.getIn([tempCol, row]) !== chip_name_a) {
-        band = false
-      }
-      break;
-    }
-  }
-  if (band) {
-    while (tempCol < col) {
-      tempCol++;
-      state = state.setIn([tempCol, row], chip_name_a)
-    }
-  }
-
-
-  // atras horiz
+  tempRow = tempRow-1
   band = true
-  tempCol = col
-  tempRow = row
-  while (tempRow >= 0 && band) {
-    tempRow--
-    if ( state.getIn([col, tempRow]) !== '0 ' && state.getIn([col, tempRow]) !== chip_name_a ) {
-      band = true
-    }
-    else {
-      if (state.getIn([col, tempRow]) !== chip_name_a) {
-        band = false
-      }
-      break;
-    }
-  }
-  if (band) {
-    while (tempRow < row) {
-      tempRow++;
-      state = state.setIn([col, tempRow], chip_name_a)
-    }
-  }
-
-  // plante horizontal
-  band = true
-  tempCol = col
-  tempRow = row
-  while (tempRow < size && band) {
-    tempRow++
-    if ( state.getIn([col, tempRow]) !== '0 ' && state.getIn([col, tempRow]) !== chip_name_a ) {
-      band = true
-    }
-    else {
-      if (state.getIn([col, tempRow]) !== chip_name_a) {
-        band = false
-      }
-      break;
-    }
-  }
-  if (band) {
-    while (tempRow > row) {
+  if (tempRow > 0 && state.getIn([col, tempRow]) === chip_name_b)  {
+    tempRow--;
+    while (tempRow > 0 && state.getIn([col, tempRow]) === chip_name_b) {
       tempRow--;
-      state = state.setIn([col, tempRow], chip_name_a)
+    }
+    if (tempRow >= 0 && state.getIn([col, tempRow]) == chip_name_a) {
+      while (tempRow < row) {
+        tempRow++;
+        state = state.setIn([col, tempRow], chip_name_a)
+      }
     }
   }
-  // diagonal , abajo dere
-  band = true
-  tempCol = col
+
+  // horizontal adelante
   tempRow = row
-
-  while (tempCol < size && tempRow < size && band) {
-    tempCol++
-    tempRow++
-    if ( state.getIn([tempCol, tempRow]) !== '0 ' && state.getIn([tempCol, tempRow]) !== chip_name_a ) {
-      band = true
-    }
-    else {
-      if (state.getIn([tempCol, tempRow]) !== chip_name_a) {
-        band = false
-      }
-      break;
-    }
-  }
-  if (band) {
-    while (tempCol > col && tempRow > row) {
-      tempCol--;
-      tempRow--;
-      state = state.setIn([tempCol, tempRow], chip_name_a)
-    }
-  }
-
-  // diagonal , arriba dere
+  tempRow = tempRow+1
   band = true
-  tempCol = col
-  tempRow = row
-
-  while (tempCol >= 0 && tempRow < size && band) {
-    tempCol--
-    tempRow++
-    if ( state.getIn([tempCol, tempRow]) !== '0 ' && state.getIn([tempCol, tempRow]) !== chip_name_a ) {
-      band = true
-    }
-    else {
-      if (state.getIn([tempCol, tempRow]) !== chip_name_a) {
-        band = false
-      }
-      break;
-    }
-  }
-  if (band) {
-    while (tempCol < col && tempRow > row) {
-      tempCol++;
-      tempRow--;
-      state = state.setIn([tempCol, tempRow], chip_name_a)
-    }
-  }
-
-// diagoanl abajo izq
-  while (tempCol < size && tempRow >= 0 && band) {
-    tempCol++
-    tempRow--
-    if ( state.getIn([tempCol, tempRow]) !== '0 ' && state.getIn([tempCol, tempRow]) !== chip_name_a ) {
-      band = true
-    }
-    else {
-      if (state.getIn([tempCol, tempRow]) !== chip_name_a) {
-        band = false
-      }
-      break;
-    }
-  }
-  if (band) {
-    while (tempCol > col && tempRow < row) {
-      tempCol--;
+  if (tempRow < size && state.getIn([col, tempRow]) === chip_name_b)  {
+    tempRow++;
+    while (tempRow < size && state.getIn([col, tempRow]) === chip_name_b) {
       tempRow++;
-      state = state.setIn([tempCol, tempRow], chip_name_a)
     }
-  }
-
-
-  // diagonal arriba iqz
-  // diagonal , abajo dere
-  band = true
-  tempCol = col
-  tempRow = row
-
-  while (tempCol >= 0 && tempRow >= 0 && band) {
-    tempCol--
-    tempRow--
-    if ( state.getIn([tempCol, tempRow]) !== '0 ' && state.getIn([tempCol, tempRow]) !== chip_name_a ) {
-      band = true
-    }
-    else {
-      if (state.getIn([tempCol, tempRow]) !== chip_name_a) {
-        band = false
+    if (tempRow < size && state.getIn([col, tempRow]) == chip_name_a) {
+      while (tempRow > row) {
+        tempRow--;
+        state = state.setIn([col, tempRow], chip_name_a)
       }
-      break;
     }
   }
-  if (band) {
-    while (tempCol < col && tempRow < row) {
+
+  // vertical abajo
+  tempCol = col
+  tempCol = tempCol+1
+  if (tempCol < size && state.getIn([tempCol, row]) === chip_name_b)  {
+    tempCol++;
+    while (tempCol < size && state.getIn([tempCol, row]) === chip_name_b) {
       tempCol++;
-      tempRow++;
-      state = state.setIn([tempCol, tempRow], chip_name_a)
+    }
+    if (tempCol < size && state.getIn([tempCol, row]) == chip_name_a) {
+      while (tempCol > col) {
+        tempCol--;
+        state = state.setIn([tempCol, row], chip_name_a)
+      }
     }
   }
+
+    // vertical arriba
+    tempCol = col
+    tempCol = tempCol-1
+    if (tempCol > 0 && state.getIn([tempCol, row]) === chip_name_b)  {
+      tempCol--;
+      while (tempCol > 0 && state.getIn([tempCol, row]) === chip_name_b) {
+        tempCol--;
+      }
+      if (tempCol >= 0 && state.getIn([tempCol, row]) == chip_name_a) {
+        while (tempCol < col) {
+          tempCol++;
+          state = state.setIn([tempCol, row], chip_name_a)
+        }
+      }
+    }
+
+    // vertical arriba
+    // horizontal atras
+        tempCol = col
+        tempCol = tempCol-1
+        tempRow = row
+        tempRow = tempRow-1
+
+        if (tempCol > 0 && tempRow > 0 && state.getIn([tempCol, tempRow]) === chip_name_b)  {
+          tempCol--
+          tempRow--
+          while (tempCol > 0 && tempRow > 0 && state.getIn([tempCol, tempRow]) === chip_name_b) {
+            tempCol--
+            tempRow--
+          }
+          if (tempCol >= 0 && tempRow >= 0 && state.getIn([tempCol, tempRow]) == chip_name_a) {
+            while (tempCol < col && tempRow < row) {
+              tempCol++;
+              tempRow++;
+              state = state.setIn([tempCol, tempRow], chip_name_a)
+            }
+          }
+        }
+
+    // //??
+    tempCol = col
+    tempCol = tempCol-1
+    tempRow = row
+    tempRow = tempRow+1
+
+    if (tempCol > 0 && tempRow < size && state.getIn([tempCol, tempRow]) === chip_name_b)  {
+      tempCol--
+      tempRow++
+      while (tempCol > 0 && tempRow < size && state.getIn([tempCol, tempRow]) === chip_name_b) {
+        tempCol--
+        tempRow++
+      }
+      if (tempCol >= 0 && tempRow < size && state.getIn([tempCol, tempRow]) == chip_name_a) {
+        while (tempCol < col && tempRow > row) {
+          tempCol++;
+          tempRow--;
+          state = state.setIn([tempCol, tempRow], chip_name_a)
+        }
+      }
+    }
+
+    tempCol = col
+    tempCol = tempCol+1
+    tempRow = row
+    tempRow = tempRow+1
+
+    if (tempCol < size && tempRow < size && state.getIn([tempCol, tempRow]) === chip_name_b)  {
+      tempCol++
+      tempRow++
+      while (tempCol < size && tempRow < size && state.getIn([tempCol, tempRow]) === chip_name_b) {
+        tempCol++
+        tempRow++
+      }
+      if (tempCol < size && tempRow < size && state.getIn([tempCol, tempRow]) == chip_name_a) {
+        while (tempCol > col && tempRow > row) {
+          tempCol--;
+          tempRow--;
+          state = state.setIn([tempCol, tempRow], chip_name_a)
+        }
+      }
+    }
+
+    // ??
+    // ??
+        tempCol = col
+        tempCol = tempCol+1
+        tempRow = row
+        tempRow = tempRow-1
+
+        if (tempCol < size && tempRow > 0 && state.getIn([tempCol, tempRow]) === chip_name_b)  {
+          tempCol++
+          tempRow--
+          while (tempCol < size && tempRow > 0 && state.getIn([tempCol, tempRow]) === chip_name_b) {
+            tempCol++
+            tempRow--
+          }
+          if (tempCol < size && tempRow >= 0 && state.getIn([tempCol, tempRow]) == chip_name_a) {
+            while (tempCol > col && tempRow < row) {
+              tempCol--;
+              tempRow++;
+              state = state.setIn([tempCol, tempRow], chip_name_a)
+            }
+          }
+        }
 
   return Board.set('state', state)
 }
