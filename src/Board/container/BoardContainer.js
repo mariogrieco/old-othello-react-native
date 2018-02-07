@@ -31,11 +31,13 @@ class BoardContainer extends Component {
 
   moveHandle = (x, y) => {
     if (this.props.BoardState.getIn([x, y]) === 'CM') {
+      // validate
       this.props.actions.move(x,y)
       this.props.actions.eat(x,y)
       this.props.actions.changeRound()
+      ///
       this.props.actions.validate()
-      this.props.actions.IA()
+      this.props.actions.IA() // get move, eat
       this.props.actions.changeRound()
       this.props.actions.validate()
     }

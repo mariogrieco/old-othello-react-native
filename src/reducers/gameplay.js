@@ -58,6 +58,7 @@ function gameplay (state = initialState, action) {
 
       if (state.getIn(['state', moves['row'], moves['col']]) === 'CM') {
         nextState = state.setIn(['state', moves['row'], moves['col']], Round)
+        nextState = eat(nextState, moves['row'], moves['col'], Round)
         return nextState
       }
 
