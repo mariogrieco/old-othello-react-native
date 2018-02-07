@@ -52,7 +52,15 @@ function gameplay (state = initialState, action) {
     }
     case 'IA': {
       let moves = getValidMove(state)
-      
+      moves = moves.get('winnningState')
+      let Round = state.get('Round')
+      let nextState = state
+
+      if (state.getIn(['state', moves['row'], moves['col']]) === 'CM') {
+        nextState = state.setIn(['state', moves['row'], moves['col']], Round)
+        return nextState
+      }
+
       return state
     }
     default: {

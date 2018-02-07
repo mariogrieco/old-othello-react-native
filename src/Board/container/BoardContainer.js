@@ -36,6 +36,8 @@ class BoardContainer extends Component {
       this.props.actions.changeRound()
       this.props.actions.validate()
       this.props.actions.IA()
+      this.props.actions.changeRound()
+      this.props.actions.validate()
     }
   }
 

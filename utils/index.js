@@ -21,6 +21,10 @@ function getValidMove (Board) {
   let state = Board.get('state')
   let size = Board.get('size')
   let optionsFor = []
+  let printBuffer = ''
+  let max = -9999;
+  let winnningState = {}
+  let winingBoard
 
   for ( let row = 0; row < size; row++ ) {
       for ( let col = 0; col < size; col++ ) {
@@ -30,13 +34,38 @@ function getValidMove (Board) {
       }
   }
 
-  let tempState = optionsFor.map((value) => {
-    let moveIn = state.setIn([value.row, value.col], 'N ')
-    moveIn = getLength(moveIn)
-    printState(moveIn)
-    return moveIn
+  let tempState = optionsFor.forEach((value) => {
+      let moveIn = eat(Board, value.row, value.col, 'N ')
+      let futState = moveIn.get('state')
+      let contadorN = 0
+      let contadorB = 0
+      //out
+      for ( let row = 0; row < size; row++ ) {
+        for ( let col = 0; col < size; col++ ) {
+          let cell = futState.getIn([row, col])
+          printBuffer += `${cell}`
+          if (futState.getIn([row, col]) === 'N ') {
+            contadorN++;
+          }
+          else if (futState.getIn([row, col]) === 'B ') {
+            contadorB++
+          }
+        }
+        console.log(printBuffer, "\n")
+        printBuffer = ''
+      }
+      console.log(' ')
+      console.log('negras', contadorN)
+      console.log('blancas', contadorB)
+      if (contadorN-contadorB >= max) {
+        winnningState = value
+        winingBoard = moveIn
+      }
+      //out
+      return moveIn
   })
 
+  return Map().set('winnningState', winnningState).set('deep', winingBoard)
 }
 
 function clear (Board) {
