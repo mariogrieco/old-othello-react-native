@@ -5,7 +5,8 @@ import {
   changeRound,
   eat,
   clear,
-  getLength
+  getLength,
+  getValidMove
 } from '../../utils'
 import { Alert } from 'react-native'
 
@@ -48,6 +49,11 @@ function gameplay (state = initialState, action) {
       let { y, x } = action.payload
       let nextState = eat(state, x, y, Round)
       return nextState
+    }
+    case 'IA': {
+      let moves = getValidMove(state)
+      
+      return state
     }
     default: {
       return state

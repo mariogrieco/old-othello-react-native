@@ -35,6 +35,7 @@ class BoardContainer extends Component {
       this.props.actions.eat(x,y)
       this.props.actions.changeRound()
       this.props.actions.validate()
+      this.props.actions.IA()
     }
   }
 

@@ -24,6 +24,12 @@ export function validate () {
   }
 }
 
+export function IA () {
+  return {
+    type: 'IA'
+  }
+}
+
 export function changeRound () {
   return {
     type: 'CHANGE_ROUND'

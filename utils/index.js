@@ -16,6 +16,29 @@ function changeRound (round) {
   return 'B '
 }
 
+
+function getValidMove (Board) {
+  let state = Board.get('state')
+  let size = Board.get('size')
+  let optionsFor = []
+
+  for ( let row = 0; row < size; row++ ) {
+      for ( let col = 0; col < size; col++ ) {
+        if (state.getIn([row, col]) === 'CM') {
+          optionsFor.push({row, col})
+        }
+      }
+  }
+
+  let tempState = optionsFor.map((value) => {
+    let moveIn = state.setIn([value.row, value.col], 'N ')
+    moveIn = getLength(moveIn)
+    printState(moveIn)
+    return moveIn
+  })
+
+}
+
 function clear (Board) {
   let state = Board.get('state')
   let size = Board.get('size')
@@ -414,5 +437,6 @@ module.exports = {
   eat,
   changeRound,
   clear,
-  getLength
+  getLength,
+  getValidMove
 }
