@@ -5,7 +5,7 @@ import {
   Text,
   ScrollView,
   Dimensions,
-  Button, 
+  Button,
   TouchableHighlight
 } from 'react-native'
 import Layout from '../components/Layout'
@@ -30,26 +30,41 @@ class BoardContainer extends Component {
   }
 
   moveHandle = (x, y) => {
-    this.props.actions.move(x,y)
+    if (this.props.BoardState.getIn([x, y]) === 'CM') {
+      this.props.actions.move(x,y)
+      this.props.actions.eat(x,y)
+      this.props.actions.changeRound()
+      this.props.actions.validate()
+    }
   }
 
   componentDidMount() {
     this.props.actions.validate()
   }
-  
+
   render () {
     let width = Dimensions.get('window').width
     let height = Dimensions.get('window').height
 
     let size = this.getSize(width, height)
-    size = size-2
+    size = size-0
 
     let rows = new Array(this.props.size).fill(0)
     let cols = new Array(this.props.size).fill(0)
     let board = this.props.BoardState
+    let countN = this.props.countN
+    let countB = this.props.countB
 
     return (
       <Layout>
+        <View>
+          <Text>
+            Contador Blancas: {countB}
+          </Text>
+          <Text>
+            Contador Negras: {countN}
+          </Text>
+        </View>
         {
           rows.map((row, rowKey) => {
             return (
@@ -65,22 +80,22 @@ class BoardContainer extends Component {
                       color = '#434343'
                     }
                     else if (board.getIn([rowKey, colKey]) === 'CM') {
-                      color = 'red'
+                      color = 'rgba(24, 124, 124, 0.4)'
                     }
                     return (
-                      <TouchableHighlight 
+                      <TouchableHighlight
                         style={styles.col}
-                        key={colKey} 
+                        key={colKey}
                         onPressIn={()=>{
                           this.moveHandle(rowKey, colKey)
                         }}
                       >
                         <View>
-                          <Cell 
-                            chip={color} 
-                            disabled={disabled} 
-                            size={size} 
-                            color={color} 
+                          <Cell
+                            chip={color}
+                            disabled={disabled}
+                            size={size}
+                            color={color}
                           />
                         </View>
                       </TouchableHighlight>
@@ -105,9 +120,14 @@ function mapDispatchToProps(dispatch, props) {
 function mapStateToProps(state, props) {
   let BoardState = state.get('gameplay').get('state')
   let size = state.get('gameplay').get('size')
+  let countB = state.get('gameplay').get('B ')
+  let countN = state.get('gameplay').get('N ')
+
   return {
     BoardState,
-    size
+    size,
+    countN,
+    countB
   }
 }
 
@@ -116,6 +136,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   col: {
+    borderWidth: 1,
+    borderColor: '#888'
   }
 })
 

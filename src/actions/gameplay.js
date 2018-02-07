@@ -1,14 +1,20 @@
 export function move (row, col) {
-  return (Dispatch) => {
-    Dispatch({
-      type: 'MOVE',
-      payload: {
-        x: row,
-        y: col
-      }
-    })
-    Dispatch(changeRound)
-    Dispatch(validate)
+  return {
+    type: 'MOVE',
+    payload: {
+      x: row,
+      y: col
+    }
+  }
+}
+
+export function eat (row, col) {
+  return {
+    type: 'EAT',
+    payload: {
+      x: row,
+      y: col
+    }
   }
 }
 

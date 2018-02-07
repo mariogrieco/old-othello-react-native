@@ -8,18 +8,6 @@ let Board = Map()
 Board = Board.set('size', 8)
 Board = Board.set('state', Map())
 
-function getOneBoard (initialRound = 'B ') {
-  let Board = Map()
-  Board = Board.set('size', 8)
-  Board = Board.set('state', Map())
-  Board = Board.set('Round', initialRound)
-  Board = initialize(Board)
-
-  return Board
-}
-
-getOneBoard()
-
 function changeRound (round) {
   if (round === 'B ') {
     return 'N '
@@ -27,6 +15,61 @@ function changeRound (round) {
 
   return 'B '
 }
+
+function clear (Board) {
+  let state = Board.get('state')
+  let size = Board.get('size')
+
+  for ( let row = 0; row < size; row++ ) {
+      for ( let col = 0; col < size; col++ ) {
+        if (state.getIn([row, col]) === 'CM') {
+          state = state.setIn([row, col], '0 ')
+        }
+      }
+  }
+
+  return Board.set('state', state)
+}
+
+function getLength (Board) {
+  let state = Board.get('state')
+  let size = Board.get('size')
+  let countN = 0
+  let countB = 0
+
+  for ( let row = 0; row < size; row++ ) {
+      for ( let col = 0; col < size; col++ ) {
+        if (state.getIn([row, col]) === 'B ') {
+          countB++
+        }
+        else if (state.getIn([row, col]) === 'N ') {
+          countN++;
+        }
+      }
+  }
+
+  Board = Board.set('B ', countB)
+  Board = Board.set('N ', countN)
+
+
+  return Board;
+}
+
+function getOneBoard () {
+  let Board = Map()
+  Board = Board.set('size', 8)
+  Board = Board.set('state', Map())
+  Board = initialize(Board)
+  Board = Board.set('Round', 'B ')
+  Board = Board.set('B ', 0)
+  Board = Board.set('N ', 0)
+  Board = Board.set('player_B ', 0)
+  Board = Board.set('player_N ', 0)
+
+  return Board
+}
+
+getOneBoard()
 
 function initialize (Board) {
   let state = Board.get('state')
@@ -282,7 +325,7 @@ function validate (Board, chip_name_a = 'B ', chip_name_b = 'N ') {
             indexRow++;
             band = true
             }
-            if (band && indexRow < size) {
+            if (band && indexRow < size && state.getIn([indexRow, col]) === '0 ') {
             state = state.setIn([indexRow, col], 'CM')
             }
 
@@ -295,7 +338,7 @@ function validate (Board, chip_name_a = 'B ', chip_name_b = 'N ') {
             indexRow--;
             band = true
             }
-            if (band && indexRow >= 0) {
+            if (band && indexRow >= 0 && state.getIn([indexRow, col]) === '0 ') {
             state = state.setIn([indexRow, col], 'CM')
             }
 
@@ -309,7 +352,7 @@ function validate (Board, chip_name_a = 'B ', chip_name_b = 'N ') {
             indexCol--;
             band = true
             }
-            if (band && indexCol >= 0) {
+            if (band && indexCol >= 0 && state.getIn([row, indexCol]) === '0 ') {
             state = state.setIn([row, indexCol], 'CM')
             }
 
@@ -322,7 +365,7 @@ function validate (Board, chip_name_a = 'B ', chip_name_b = 'N ') {
             indexCol++;
             band = true
             }
-            if (band && indexCol < size) {
+            if (band && indexCol < size  && state.getIn([row, indexCol]) === '0 ') {
             state = state.setIn([row, indexCol], 'CM')
             }
 
@@ -338,7 +381,7 @@ function validate (Board, chip_name_a = 'B ', chip_name_b = 'N ') {
             indexRow--
             band = true
             }
-            if (band && indexCol >= 0 && indexRow >= 0) {
+            if (band && indexCol >= 0 && indexRow >= 0 && state.getIn([indexRow, indexCol]) === '0 ') {
               state = state.setIn([indexRow, indexCol], 'CM')
             }
 
@@ -355,7 +398,7 @@ function validate (Board, chip_name_a = 'B ', chip_name_b = 'N ') {
              indexRow++
              band = true
              }
-             if (band && indexCol < size && indexRow < size) {
+             if (band && indexCol < size && indexRow < size && state.getIn([indexRow, indexCol]) === '0 ') {
                state = state.setIn([indexRow, indexCol], 'CM')
              }
 
@@ -371,7 +414,7 @@ function validate (Board, chip_name_a = 'B ', chip_name_b = 'N ') {
              indexRow--
              band = true
              }
-             if (band && indexCol < size && indexRow >= 0) {
+             if (band && indexCol < size && indexRow >= 0 && state.getIn([indexRow, indexCol]) === '0 ') {
                state = state.setIn([indexRow, indexCol], 'CM')
              }
 
@@ -388,7 +431,7 @@ function validate (Board, chip_name_a = 'B ', chip_name_b = 'N ') {
              indexRow++
              band = true
              }
-             if (band && indexCol >= 0 && indexRow < size) {
+             if (band && indexCol >= 0 && indexRow < size && state.getIn([indexRow, col]) === '0 ') {
                state = state.setIn([indexRow, indexCol], 'CM')
              }
       }
@@ -404,5 +447,7 @@ module.exports = {
   validate,
   getOneBoard,
   eat,
-  changeRound
+  changeRound,
+  clear,
+  getLength
 }

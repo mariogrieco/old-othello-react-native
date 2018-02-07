@@ -1,5 +1,12 @@
 import { fromJS } from 'immutable'
-import { getOneBoard, validate, changeRound } from '../../utils'
+import {
+  getOneBoard,
+  validate,
+  changeRound,
+  eat,
+  clear,
+  getLength
+} from '../../utils'
 import { Alert } from 'react-native'
 
 const initialState = getOneBoard()
@@ -10,8 +17,11 @@ function gameplay (state = initialState, action) {
       let Round = state.get('Round')
       let who = Round === 'B ' ? "Blancas" : "Negras"
       let message = `Turno de las ${who}`
-      Alert.alert(message)
-      const nextState = validate(state, Round, changeRound(Round))
+      let nextState = clear(state)
+      // Alert.alert(message)
+      nextState = validate(nextState, Round, changeRound(Round))
+      nextState = getLength(nextState)
+
       return nextState
     }
     case 'CHANGE_ROUND': {
@@ -22,7 +32,7 @@ function gameplay (state = initialState, action) {
       let { x, y } = action.payload
       let Round = state.get('Round')
       let nextState
-      
+
       if (state.getIn(['state', x, y]) === 'CM') {
         nextState = state.setIn(['state', x, y], Round)
         return nextState
@@ -30,15 +40,14 @@ function gameplay (state = initialState, action) {
       else {
         Alert.alert(`Movimiento invalido ${action.payload.x}, ${action.payload.y}!`)
       }
-     
+
       return state
     }
     case 'EAT': {
       let Round = state.get('Round')
-      let nextState
-
-
-      return state
+      let { y, x } = action.payload
+      let nextState = eat(state, x, y, Round)
+      return nextState
     }
     default: {
       return state
