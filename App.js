@@ -4,11 +4,11 @@ import {
   Router,
   Scene
 } from 'react-native-router-flux'
-import GamePlay from './src/pages/Home'
+import Home from './src/pages/Home'
 import DifficultySelect from './src/pages/DifficultySelect'
 import Login from './src/pages/Login'
 import EnterName from './src/pages/EnterName'
-import Home from './src/pages/GamePlay'
+import GamePlay from './src/pages/GamePlay'
 import rootReducer from './src/reducers'
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
@@ -41,13 +41,6 @@ export default class App extends Component {
                 // hideNavBar
               />
               <Scene
-                key='Login'
-                title='Login'
-                path='/Login'
-                component={Login}
-                // hideNavBar
-              />
-              <Scene
                 key='EnterName'
                 title='EnterName'
                 path='/'
@@ -59,16 +52,16 @@ export default class App extends Component {
                 title='GamePlay'
                 path='/'
                 component={GamePlay}
-                // hideNavBar
+                hideNavBar
               />
             </Scene>
           </Router>
-          <View style={styles.appInfo}>
-            <Text style={styles.text}>
+          {/* <View style={styles.appInfo}> */}
+            {/* <Text style={styles.text}>
               Development version '0.5.0' -
               Mario Grieco
-            </Text>
-          </View>
+            </Text> */}
+          {/* </View> */}
         </View>
       </Provider>
     );

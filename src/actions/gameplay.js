@@ -2,8 +2,8 @@ export function move (row, col) {
   return {
     type: 'MOVE',
     payload: {
-      x: row,
-      y: col
+      row,
+      col
     }
   }
 }
@@ -12,8 +12,8 @@ export function eat (row, col) {
   return {
     type: 'EAT',
     payload: {
-      x: row,
-      y: col
+      row,
+      col
     }
   }
 }
@@ -33,5 +33,18 @@ export function IA () {
 export function changeRound () {
   return {
     type: 'CHANGE_ROUND'
+  }
+}
+
+
+export function clear () {
+  return {
+    type: 'CLEAR'
+  }
+}
+
+export function reset () {
+  return {
+    type: 'RESET'
   }
 }

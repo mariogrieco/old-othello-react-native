@@ -6,6 +6,7 @@ import {
   TextInput,
   Button
 } from 'react-native'
+import { connect } from 'react-redux'
 import { Actions } from 'react-native-router-flux'
 
 
@@ -22,6 +23,12 @@ class GamePlay extends Component {
 
   onPressBtn = () => {
     if (this.state.username.length>0) {
+      this.props.dispatch({
+        type: 'USERNAME',
+        payload: {
+          username: this.state.username
+        }
+      })
       Actions.GamePlay()
     }
   }
@@ -64,4 +71,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default GamePlay
+export default connect(null)(GamePlay)

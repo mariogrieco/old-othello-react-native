@@ -6,7 +6,12 @@ import {
   eat,
   clear,
   getLength,
-  getValidMove
+  getValidMove,
+  clearOption,
+  printState,
+  blanca,
+  canMove,
+  negra
 } from '../../utils'
 import { Alert } from 'react-native'
 
@@ -15,54 +20,67 @@ const initialState = getOneBoard()
 function gameplay (state = initialState, action) {
   switch (action.type) {
     case 'VALIDATE': {
-      let Round = state.get('Round')
-      let who = Round === 'B ' ? "Blancas" : "Negras"
-      let message = `Turno de las ${who}`
       let nextState = clear(state)
-      // Alert.alert(message)
-      nextState = validate(nextState, Round, changeRound(Round))
+      nextState = validate(nextState, negra, blanca)
       nextState = getLength(nextState)
 
       return nextState
     }
-    case 'CHANGE_ROUND': {
-      let Round = state.get('Round')
-      return state.set('Round', changeRound(Round))
+    case 'USERNAME': {
+      return state.set('USERNAME', action.payload.username)
     }
     case 'MOVE': {
-      let { x, y } = action.payload
-      let Round = state.get('Round')
-      let nextState
-
-      if (state.getIn(['state', x, y]) === 'CM') {
-        nextState = state.setIn(['state', x, y], Round)
+      let { row, col } = action.payload
+      let nextState = state
+      if (state.getIn(['state', row, col]) === canMove) {
+        nextState = nextState.setIn(['state', row, col], negra)
+        nextState = eat(nextState, row, col, negra)
+        nextState = clear(nextState)
+        nextState = validate(nextState, negra, blanca)
+        nextState = getLength(nextState)
+        // printState(nextState)
         return nextState
       }
       else {
         Alert.alert(`Movimiento invalido ${action.payload.x}, ${action.payload.y}!`)
       }
 
-      return state
-    }
-    case 'EAT': {
-      let Round = state.get('Round')
-      let { y, x } = action.payload
-      let nextState = eat(state, x, y, Round)
       return nextState
     }
+    case 'CLEAR': {
+      return clear(state)
+    }
+    case 'RESET': {
+      return getOneBoard()
+    }
     case 'IA': {
-      let moves = getValidMove(state)
+      let nextState = clear(state)
+      nextState = validate(nextState, blanca, negra)
+      let moves = getValidMove(nextState)
       moves = moves.get('winnningState')
-      let Round = state.get('Round')
-      let nextState = state
+      // // validar cuando no tienen mas movimientos
 
-      if (state.getIn(['state', moves['row'], moves['col']]) === 'CM') {
-        nextState = state.setIn(['state', moves['row'], moves['col']], Round)
-        nextState = eat(nextState, moves['row'], moves['col'], Round)
+      if (!moves) {
+        Alert.alert('la pc no tiene movimientos')
+        nextState = clear(state)
+        nextState = validate(nextState, negra, blanca)
+        nextState = getLength(nextState)
         return nextState
       }
+      else if (nextState.getIn(['state', moves['row'], moves['col']]) === canMove) {
+        nextState = nextState.setIn(['state', moves['row'], moves['col']], blanca)
+        nextState = validate(nextState, blanca, negra)
+        nextState = eat(nextState, moves['row'], moves['col'], blanca)
 
-      return state
+        nextState = clear(nextState)
+        nextState = validate(nextState, negra, blanca)
+        nextState = getLength(nextState)
+        
+        return nextState
+      }
+      else {
+        Alert.alert('false move')
+      }
     }
     default: {
       return state

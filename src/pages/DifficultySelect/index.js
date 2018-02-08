@@ -15,6 +15,7 @@ class DifficultySelect extends Component {
     return (
       <Layout title='Difficulty Select'>
         <Option text='Easy' handlePress={this.handleAction}/>
+        <Option text='Hard' handlePress={this.handleAction}/>
       </Layout>
     )
   }

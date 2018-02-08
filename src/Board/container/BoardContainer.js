@@ -8,6 +8,7 @@ import {
   Button,
   TouchableHighlight
 } from 'react-native'
+import timer  from 'react-native-timer'
 import Layout from '../components/Layout'
 import Row from '../components/Row'
 import Cell from '../container/CellContainer'
@@ -16,6 +17,11 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as Actions from '../../actions/gameplay'
+import {
+  canMove,
+  blanca,
+  negra  
+} from '../../../utils'
 
 class BoardContainer extends Component {
   getSize (w, h) {
@@ -29,17 +35,14 @@ class BoardContainer extends Component {
     }
   }
 
-  moveHandle = (x, y) => {
-    if (this.props.BoardState.getIn([x, y]) === 'CM') {
-      // validate
-      this.props.actions.move(x,y)
-      this.props.actions.eat(x,y)
-      this.props.actions.changeRound()
-      ///
+  moveHandle = (rowKey, colKey) => {
+    if (this.props.BoardState.getIn([rowKey, colKey]) === canMove) {
       this.props.actions.validate()
-      this.props.actions.IA() // get move, eat
-      this.props.actions.changeRound()
-      this.props.actions.validate()
+      this.props.actions.move(rowKey, colKey)
+      this.props.actions.clear()
+      timer.setTimeout(this, 'PC PLAY', () => {
+        this.props.actions.IA()
+      }, 600)
     }
   }
 
@@ -52,7 +55,7 @@ class BoardContainer extends Component {
     let height = Dimensions.get('window').height
 
     let size = this.getSize(width, height)
-    size = size-0
+    size = size-2
 
     let rows = new Array(this.props.size).fill(0)
     let cols = new Array(this.props.size).fill(0)
@@ -61,15 +64,8 @@ class BoardContainer extends Component {
     let countB = this.props.countB
 
     return (
-      <Layout>
-        <View>
-          <Text>
-            Contador Blancas: {countB}
-          </Text>
-          <Text>
-            Contador Negras: {countN}
-          </Text>
-        </View>
+      <Layout username={this.props.username} blancas={countB} negras={countN}>
+        <ScrollView>
         {
           rows.map((row, rowKey) => {
             return (
@@ -78,24 +74,23 @@ class BoardContainer extends Component {
                   cols.map((col, colKey) => {
                     let color = undefined
                     let disabled = false
-                    if (board.getIn([rowKey, colKey]) === 'B ') {
-                      color = 'white'
-                    }
-                    else if (board.getIn([rowKey, colKey]) === 'N ') {
+                    if (board.getIn([rowKey, colKey]) === negra) {
                       color = '#434343'
                     }
-                    else if (board.getIn([rowKey, colKey]) === 'CM') {
+                    else if (board.getIn([rowKey, colKey]) === blanca) {
+                      color = 'white'
+                    }
+                    else if (board.getIn([rowKey, colKey]) === canMove) {
                       color = 'rgba(24, 124, 124, 0.4)'
                     }
                     return (
                       <TouchableHighlight
-                        style={styles.col}
                         key={colKey}
                         onPressIn={()=>{
                           this.moveHandle(rowKey, colKey)
                         }}
                       >
-                        <View>
+                        <View style={styles.col}>
                           <Cell
                             chip={color}
                             disabled={disabled}
@@ -111,6 +106,7 @@ class BoardContainer extends Component {
             )
           })
         }
+        </ScrollView>
       </Layout>
     )
   }
@@ -125,14 +121,16 @@ function mapDispatchToProps(dispatch, props) {
 function mapStateToProps(state, props) {
   let BoardState = state.get('gameplay').get('state')
   let size = state.get('gameplay').get('size')
-  let countB = state.get('gameplay').get('B ')
-  let countN = state.get('gameplay').get('N ')
+  let username = state.get('gameplay').get('USERNAME')
+  let countB = state.get('gameplay').get(blanca)
+  let countN = state.get('gameplay').get(negra)
 
   return {
     BoardState,
     size,
     countN,
-    countB
+    countB,
+    username
   }
 }
 
