@@ -15,7 +15,8 @@ import {
 } from '../../utils'
 import { Alert } from 'react-native'
 
-const initialState = getOneBoard()
+const initialState = validate(getOneBoard(), negra, blanca)
+let lastState = []
 
 function gameplay (state = initialState, action) {
   switch (action.type) {
@@ -25,6 +26,14 @@ function gameplay (state = initialState, action) {
       nextState = getLength(nextState)
 
       return nextState
+    }
+    case 'GO_BACK': {
+      let back = lastState.pop()
+      if (back) {
+        return back
+      }
+      
+      return state
     }
     case 'USERNAME': {
       return state.set('USERNAME', action.payload.username)
@@ -39,19 +48,21 @@ function gameplay (state = initialState, action) {
         nextState = validate(nextState, negra, blanca)
         nextState = getLength(nextState)
         // printState(nextState)
+        lastState.push(state)
+        nextState = clear(nextState)
         return nextState
       }
       else {
         Alert.alert(`Movimiento invalido ${action.payload.x}, ${action.payload.y}!`)
       }
-
+     
       return nextState
     }
     case 'CLEAR': {
       return clear(state)
     }
     case 'RESET': {
-      return getOneBoard()
+      return validate(getOneBoard().set('USERNAME', state.get('USERNAME')), negra, blanca)
     }
     case 'IA': {
       let nextState = clear(state)
@@ -75,7 +86,6 @@ function gameplay (state = initialState, action) {
         nextState = clear(nextState)
         nextState = validate(nextState, negra, blanca)
         nextState = getLength(nextState)
-        
         return nextState
       }
       else {

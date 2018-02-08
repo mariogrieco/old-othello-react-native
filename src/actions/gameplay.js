@@ -18,6 +18,12 @@ export function eat (row, col) {
   }
 }
 
+export function goBack()  {
+  return {
+    type: 'GO_BACK'
+  }
+}
+
 export function validate () {
   return {
     type: 'VALIDATE'
@@ -43,7 +49,7 @@ export function clear () {
   }
 }
 
-export function reset () {
+export function restar () {
   return {
     type: 'RESET'
   }

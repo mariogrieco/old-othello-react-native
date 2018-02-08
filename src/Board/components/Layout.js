@@ -11,14 +11,18 @@ function Layout (props) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
-        {`${props.username} vs computer`} 
+        {`${props.username} vs Computer`} 
       </Text>
-      <TouchableHighlight>
-       <Button onPress={()=>{}}
+       <Button 
+         style={styles.button}
+         onPress={props.restart}
           title='Restart'
           color='#ABDBDf'
         />
-      </TouchableHighlight>
+        <Button onPress={props.goBack}
+          title='Last state'
+          color='#ABDBDf'
+        />
       <Text style={styles.textTo}>
         {`Blancas: ${props.blancas} - Negras: ${props.negras}`} 
       </Text>
@@ -40,7 +44,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 25,
     color: '#f6f6f6',
-    padding: 5
+    padding: 25
+  },
+  button: {
+    marginBottom: 10
   }
 })
 

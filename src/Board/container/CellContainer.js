@@ -2,16 +2,11 @@ import React, { Component, PureComponent }  from 'react'
 import Cell from '../components/Cell'
 import Chip from '../components/Chip'
 
-class CellContainer extends PureComponent {
-  state = {
-    animChange: 'blue'
-  }
-
+class CellContainer extends Component {
   render () {
     const chip = this.props.chip
     const color = this.props.color
     const size = this.props.size
-    const animChange = this.state.animChange
 
     return (
       <Cell size={size}>

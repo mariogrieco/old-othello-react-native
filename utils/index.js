@@ -61,9 +61,15 @@ function getValidMove(Board) {
     // console.log(' ')
     // console.log('negra', contadorN)
     // console.log('blanca', contadorB)
-    if (contadorN - contadorB >= max) {
+    if (contadorB > max) {
       winnningState = value
       winingBoard = moveIn
+    } else if (contadorN === max) {
+      let num = Math.random(100) % 20
+      if (num >= 10) {
+        winnningState = value
+        winingBoard = moveIn
+      }
     }
     //out
     return moveIn
@@ -173,7 +179,7 @@ function eat(Board, col, row, chip_name_a = blanca) {
   tempRow = row
   tempRow = tempRow - 1
   band = true
-  if (tempRow > 0 && state.getIn([col, tempRow]) === chip_name_b) {
+  if (tempRow >= 0 && state.getIn([col, tempRow]) === chip_name_b) {
     tempRow--;
     while (tempRow > 0 && state.getIn([col, tempRow]) === chip_name_b) {
       tempRow--;
@@ -222,7 +228,7 @@ function eat(Board, col, row, chip_name_a = blanca) {
   // vertical arriba
   tempCol = col
   tempCol = tempCol - 1
-  if (tempCol > 0 && state.getIn([tempCol, row]) === chip_name_b) {
+  if (tempCol >= 0 && state.getIn([tempCol, row]) === chip_name_b) {
     tempCol--;
     while (tempCol > 0 && state.getIn([tempCol, row]) === chip_name_b) {
       tempCol--;
@@ -242,7 +248,7 @@ function eat(Board, col, row, chip_name_a = blanca) {
   tempRow = row
   tempRow = tempRow - 1
 
-  if (tempCol > 0 && tempRow > 0 && state.getIn([tempCol, tempRow]) === chip_name_b) {
+  if (tempCol >= 0 && tempRow >= 0 && state.getIn([tempCol, tempRow]) === chip_name_b) {
     tempCol--
     tempRow--
     while (tempCol > 0 && tempRow > 0 && state.getIn([tempCol, tempRow]) === chip_name_b) {
@@ -264,7 +270,7 @@ function eat(Board, col, row, chip_name_a = blanca) {
   tempRow = row
   tempRow = tempRow + 1
 
-  if (tempCol > 0 && tempRow < size && state.getIn([tempCol, tempRow]) === chip_name_b) {
+  if (tempCol >= 0 && tempRow < size && state.getIn([tempCol, tempRow]) === chip_name_b) {
     tempCol--
     tempRow++
     while (tempCol > 0 && tempRow < size && state.getIn([tempCol, tempRow]) === chip_name_b) {
@@ -308,7 +314,7 @@ function eat(Board, col, row, chip_name_a = blanca) {
   tempRow = row
   tempRow = tempRow - 1
 
-  if (tempCol < size && tempRow > 0 && state.getIn([tempCol, tempRow]) === chip_name_b) {
+  if (tempCol < size && tempRow >= 0 && state.getIn([tempCol, tempRow]) === chip_name_b) {
     tempCol++
     tempRow--
     while (tempCol < size && tempRow > 0 && state.getIn([tempCol, tempRow]) === chip_name_b) {
@@ -338,6 +344,24 @@ function validate(Board, chip_name_a = blanca, chip_name_b = negra) {
       let band = false
 
       if (state.getIn([row, col]) === chip_name_a) {
+        
+
+        // OTRO
+        indexCol = col
+        indexRow = row
+        band = false
+        //   while () diegonal arriba atras
+        indexCol--
+        indexRow--
+        while (indexRow >= 0 && indexCol >= 0 && state.getIn([indexRow, indexCol]) === chip_name_b) {
+          indexCol--
+          indexRow--
+          band = true
+        }
+        if (band && indexCol >= 0 && indexRow >= 0 && state.getIn([indexRow, indexCol]) === clearOption) {
+          state = state.setIn([indexRow, indexCol], canMove)
+        }
+
         //   while () horizontal pa lante
         indexCol = col
         indexRow = row
@@ -350,23 +374,7 @@ function validate(Board, chip_name_a = blanca, chip_name_b = negra) {
         if (band && indexCol < size && state.getIn([row, indexCol]) === clearOption) {
           state = state.setIn([row, indexCol], canMove)
         }
-
-        // OTRO
-        indexCol = col
-        indexRow = row
-        band = false
-        //   while () diegonal arriba atras
-        indexCol--
-        indexRow--
-        while (indexRow > 0 && indexCol > 0 && state.getIn([indexRow, indexCol]) === chip_name_b) {
-          indexCol--
-          indexRow--
-          band = true
-        }
-        if (band && indexCol >= 0 && indexRow >= 0 && state.getIn([indexRow, indexCol]) === clearOption) {
-          state = state.setIn([indexRow, indexCol], canMove)
-        }
-
+        
         // OTRO
         indexCol = col
         indexRow = row
@@ -461,8 +469,8 @@ function validate(Board, chip_name_a = blanca, chip_name_b = negra) {
   }
 
   let result = Board.set('state', state)
-  printState(Board.set('state', state))
-  console.log('\n')
+  // printState(Board.set('state', state))
+  // console.log('\n')
   return result
 }
 

@@ -35,19 +35,26 @@ class BoardContainer extends Component {
     }
   }
 
+  restart = () => {
+    this.props.actions.restar()
+  }
+
+  goBack = () => {
+    this.props.actions.goBack()
+  }
+
   moveHandle = (rowKey, colKey) => {
     if (this.props.BoardState.getIn([rowKey, colKey]) === canMove) {
-      this.props.actions.validate()
+      // this.props.actions.validate()
       this.props.actions.move(rowKey, colKey)
-      this.props.actions.clear()
+      // this.props.actions.clear()
       timer.setTimeout(this, 'PC PLAY', () => {
         this.props.actions.IA()
-      }, 600)
+      }, 500)
     }
   }
 
   componentDidMount() {
-    this.props.actions.validate()
   }
 
   render () {
@@ -64,7 +71,12 @@ class BoardContainer extends Component {
     let countB = this.props.countB
 
     return (
-      <Layout username={this.props.username} blancas={countB} negras={countN}>
+      <Layout 
+        goBack={this.goBack}
+        restart={this.restart} 
+        username={this.props.username} 
+        blancas={countB} 
+        negras={countN}>
         <ScrollView>
         {
           rows.map((row, rowKey) => {
