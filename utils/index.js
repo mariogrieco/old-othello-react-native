@@ -349,11 +349,10 @@ function validateDownLeft(state, row, col, chip_name_b, size) {
     band = true
   }
   if (band && indexCol >= 0 && indexRow < size && state.getIn([indexRow, col]) === clearOption) {
-    state = state.setIn([indexRow, indexCol], canMove)
-    console.warn('one')
+    return [indexRow, indexCol]
   }
 
-  return state
+  return undefined
 }
 
 function validateUpBack(state, row, col, chip_name_b, size) {
@@ -370,10 +369,10 @@ function validateUpBack(state, row, col, chip_name_b, size) {
     band = true
   }
   if (band && indexCol >= 0 && indexRow >= 0 && state.getIn([indexRow, indexCol]) === clearOption) {
-    state = state.setIn([indexRow, indexCol], canMove)
+    return [indexRow, indexCol]
   }
 
-  return state
+  return undefined
 }
 
 
@@ -389,10 +388,10 @@ function validateRigth (state, row, col, chip_name_b, size)  {
     band = true
   }
   if (band && indexCol < size && state.getIn([row, indexCol]) === clearOption) {
-    state = state.setIn([row, indexCol], canMove)
+    return [row, indexCol]
   }
 
-  return state
+  return undefined
 }
 
 function validateDownRight (state, row, col, chip_name_b, size) {
@@ -409,11 +408,10 @@ function validateDownRight (state, row, col, chip_name_b, size) {
     band = true
   }
   if (band && indexCol < size && indexRow < size && state.getIn([indexRow, indexCol]) === clearOption) {
-    state = state.setIn([indexRow, indexCol], canMove)
-    console.warn('one')
+    return [indexRow, indexCol]
   }
 
-  return state
+  return undefined
 }
 
 function validateUpRigth (state, row, col, chip_name_b, size) {
@@ -431,10 +429,10 @@ function validateUpRigth (state, row, col, chip_name_b, size) {
   }
 
   if (band && indexCol < size && indexRow >= 0 && state.getIn([indexRow, indexCol]) === clearOption) {
-    state = state.setIn([indexRow, indexCol], canMove)
+    return [indexRow, indexCol]
   }
 
-  return state
+  return undefined
 }
 
 function validateDown (state, row, col, chip_name_b, size) {
@@ -449,7 +447,7 @@ function validateDown (state, row, col, chip_name_b, size) {
     band = true
   }
   if (band && indexRow < size && state.getIn([indexRow, col]) === clearOption) {
-    state = state.setIn([indexRow, col], canMove)
+   return [indexRow, col]
   }
 
   return state
@@ -467,9 +465,10 @@ function validateUp (state, row, col, chip_name_b, size) {
     band = true
   }
   if (band && indexRow >= 0 && state.getIn([indexRow, col]) === clearOption) {
-    state = state.setIn([indexRow, col], canMove)
+   return [indexRow, col]
   }
-  return state
+
+  return undefined
 }
 
 function validateBack (state, row, col, chip_name_b, size) {
@@ -484,7 +483,7 @@ function validateBack (state, row, col, chip_name_b, size) {
     band = true
   }
   if (band && indexCol >= 0 && state.getIn([row, indexCol]) === clearOption) {
-    state = state.setIn([row, indexCol], canMove)
+    return [row, indexCol]
   }
 
   return state
@@ -496,21 +495,28 @@ function validate(Board, chip_name_a = blanca, chip_name_b = negra) {
   let size = Board.get('size')
   let state = Board.get('state')
   let nextState = state
+  let coordsToApply = []
 
   for (let row = 0; row < size; row++) {
     for (let col = 0; col < size; col++) {
       if (state.getIn([row, col]) === chip_name_a) {
-        nextState = validateDownRight(nextState, row, col, chip_name_b, size)
-        nextState = validateDownLeft(nextState, row, col, chip_name_b, size)
-        // nextState = validateUpBack(nextState, row, col, chip_name_b, size)
-        // nextState = validateUpRigth(nextState, row, col, chip_name_b, size)
-        // nextState = validateDown(nextState, row, col, chip_name_b, size)
-        // nextState = validateUp(nextState, row, col, chip_name_b, size)
-        // nextState = validateBack(nextState, row, col, chip_name_b, size)
-        // nextState = validateRigth(nextState, row, col, chip_name_b, size)
+        coordsToApply.push(validateDownLeft(nextState, row, col, chip_name_b, size))
+        coordsToApply.push(validateDownRight(nextState, row, col, chip_name_b, size))
+        coordsToApply.push(validateUpBack(nextState, row, col, chip_name_b, size))
+        coordsToApply.push(validateUpRigth(nextState, row, col, chip_name_b, size))
+        coordsToApply.push(validateDown(nextState, row, col, chip_name_b, size))
+        coordsToApply.push(validateUp(nextState, row, col, chip_name_b, size))
+        coordsToApply.push(validateBack(nextState, row, col, chip_name_b, size))
+        coordsToApply.push(validateRigth(nextState, row, col, chip_name_b, size))
       }
     }
   }
+
+  coordsToApply.map(value => {
+    if (value) {
+      nextState = nextState.setIn(value, canMove)
+    }
+  })
 
   let result = Board.set('state', nextState)
   return result
