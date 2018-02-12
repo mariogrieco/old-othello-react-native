@@ -1,13 +1,17 @@
 const {
   Map,
   toJS,
-  fromJS
+  merge
 } = require('immutable')
 
 const clearOption = '0'
 const blanca = 'B'
 const negra = 'N'
-const canMove = 'M'
+const canMove = '.'
+
+function setIn(Board, that, row, col) {
+  return Board.setIn(['state', row, col], that)
+}
 
 function changeRound(round) {
   if (round === blanca) {
@@ -162,7 +166,7 @@ function printState(Board) {
       let cell = state.getIn([row, col])
       printBuffer += ` ${cell} `
     }
-    console.log(printBuffer, '')
+    console.warn(printBuffer, '')
     printBuffer = ''
   }
 }
@@ -332,145 +336,183 @@ function eat(Board, col, row, chip_name_a = blanca) {
   return Board.set('state', state)
 }
 
+function validateDownLeft(state, row, col, chip_name_b, size) {
+  let indexCol = col
+  let indexRow = row
+  let band = false
+
+  indexCol--
+  indexRow++
+  while (indexRow < size && indexCol >= 0 && state.getIn([indexRow, indexCol]) === chip_name_b) {
+    indexCol--
+    indexRow++
+    band = true
+  }
+  if (band && indexCol >= 0 && indexRow < size && state.getIn([indexRow, col]) === clearOption) {
+    state = state.setIn([indexRow, indexCol], canMove)
+    console.warn('one')
+  }
+
+  return state
+}
+
+function validateUpBack(state, row, col, chip_name_b, size) {
+  
+  let indexCol = col
+  let indexRow = row
+  let band = false
+
+  indexCol--
+  indexRow--
+  while (indexRow >= 0 && indexCol >= 0 && state.getIn([indexRow, indexCol]) === chip_name_b) {
+    indexCol--
+    indexRow--
+    band = true
+  }
+  if (band && indexCol >= 0 && indexRow >= 0 && state.getIn([indexRow, indexCol]) === clearOption) {
+    state = state.setIn([indexRow, indexCol], canMove)
+  }
+
+  return state
+}
+
+
+function validateRigth (state, row, col, chip_name_b, size)  {
+  
+  let indexCol = col
+  let indexRow = row
+  let band = false
+
+  indexCol++
+  while (indexCol < size && state.getIn([row, indexCol]) === chip_name_b) {
+    indexCol++;
+    band = true
+  }
+  if (band && indexCol < size && state.getIn([row, indexCol]) === clearOption) {
+    state = state.setIn([row, indexCol], canMove)
+  }
+
+  return state
+}
+
+function validateDownRight (state, row, col, chip_name_b, size) {
+  
+  let indexCol = col
+  let indexRow = row
+  let band = false
+
+  indexCol++
+  indexRow++
+  while (indexRow < size && indexCol < size && state.getIn([indexRow, indexCol]) === chip_name_b) {
+    indexCol++
+    indexRow++
+    band = true
+  }
+  if (band && indexCol < size && indexRow < size && state.getIn([indexRow, indexCol]) === clearOption) {
+    state = state.setIn([indexRow, indexCol], canMove)
+    console.warn('one')
+  }
+
+  return state
+}
+
+function validateUpRigth (state, row, col, chip_name_b, size) {
+  
+  let indexCol = col
+  let indexRow = row
+  let band = false
+
+  indexCol++
+  indexRow--
+  while (indexRow >= 0 && indexCol < size && state.getIn([indexRow, indexCol]) === chip_name_b) {
+    indexCol++
+    indexRow--
+    band = true
+  }
+
+  if (band && indexCol < size && indexRow >= 0 && state.getIn([indexRow, indexCol]) === clearOption) {
+    state = state.setIn([indexRow, indexCol], canMove)
+  }
+
+  return state
+}
+
+function validateDown (state, row, col, chip_name_b, size) {
+  
+  let indexCol = col
+  let indexRow = row
+  let band = false
+
+  indexRow++
+  while (indexRow < size && state.getIn([indexRow, col]) === chip_name_b) {
+    indexRow++;
+    band = true
+  }
+  if (band && indexRow < size && state.getIn([indexRow, col]) === clearOption) {
+    state = state.setIn([indexRow, col], canMove)
+  }
+
+  return state
+}
+
+function validateUp (state, row, col, chip_name_b, size) {
+  
+  let indexCol = col
+  let indexRow = row
+  let band = false
+
+  indexRow--
+  while (indexRow >= 0 && state.getIn([indexRow, col]) === chip_name_b) {
+    indexRow--;
+    band = true
+  }
+  if (band && indexRow >= 0 && state.getIn([indexRow, col]) === clearOption) {
+    state = state.setIn([indexRow, col], canMove)
+  }
+  return state
+}
+
+function validateBack (state, row, col, chip_name_b, size) {
+  
+  let indexCol = col
+  let indexRow = row
+  let band = false
+
+  indexCol--
+  while (indexCol >= 0 && state.getIn([row, indexCol]) === chip_name_b) {
+    indexCol--;
+    band = true
+  }
+  if (band && indexCol >= 0 && state.getIn([row, indexCol]) === clearOption) {
+    state = state.setIn([row, indexCol], canMove)
+  }
+
+  return state
+}
+
+
 function validate(Board, chip_name_a = blanca, chip_name_b = negra) {
   Board = clear(Board)
   let size = Board.get('size')
   let state = Board.get('state')
+  let nextState = state
 
   for (let row = 0; row < size; row++) {
     for (let col = 0; col < size; col++) {
-      let indexCol = col
-      let indexRow = row
-      let band = false
-
       if (state.getIn([row, col]) === chip_name_a) {
-        
-
-        // OTRO
-        indexCol = col
-        indexRow = row
-        band = false
-        //   while () diegonal arriba atras
-        indexCol--
-        indexRow--
-        while (indexRow >= 0 && indexCol >= 0 && state.getIn([indexRow, indexCol]) === chip_name_b) {
-          indexCol--
-          indexRow--
-          band = true
-        }
-        if (band && indexCol >= 0 && indexRow >= 0 && state.getIn([indexRow, indexCol]) === clearOption) {
-          state = state.setIn([indexRow, indexCol], canMove)
-        }
-
-        //   while () horizontal pa lante
-        indexCol = col
-        indexRow = row
-        band = false
-        indexCol++
-        while (indexCol < size && state.getIn([row, indexCol]) === chip_name_b) {
-          indexCol++;
-          band = true
-        }
-        if (band && indexCol < size && state.getIn([row, indexCol]) === clearOption) {
-          state = state.setIn([row, indexCol], canMove)
-        }
-        
-        // OTRO
-        indexCol = col
-        indexRow = row
-        band = false
-        //   while () diegonal bajo dere
-        indexCol++
-        indexRow++
-        while (indexRow < size && indexCol < size && state.getIn([indexRow, indexCol]) === chip_name_b) {
-          indexCol++
-          indexRow++
-          band = true
-        }
-        if (band && indexCol < size && indexRow < size && state.getIn([indexRow, indexCol]) === clearOption) {
-          state = state.setIn([indexRow, indexCol], canMove)
-        }
-
-        // // OTRO
-        //   while () diegonal arriba dere
-        indexCol = col
-        indexRow = row
-        band = false
-        indexCol++
-        indexRow--
-        while (indexRow >= 0 && indexCol < size && state.getIn([indexRow, indexCol]) === chip_name_b) {
-          indexCol++
-          indexRow--
-          band = true
-        }
-
-        if (band && indexCol < size && indexRow >= 0 && state.getIn([indexRow, indexCol]) === clearOption) {
-          state = state.setIn([indexRow, indexCol], canMove)
-        }
-
-
-        //               // OTRO
-        indexCol = col
-        indexRow = row
-        band = false
-        //   while () diegonal bajo iqz
-        indexCol--
-        indexRow++
-        while (indexRow < size && indexCol >= 0 && state.getIn([indexRow, indexCol]) === chip_name_b) {
-          indexCol--
-          indexRow++
-          band = true
-        }
-        if (band && indexCol >= 0 && indexRow < size && state.getIn([indexRow, col]) === clearOption) {
-          state = state.setIn([indexRow, indexCol], canMove)
-        }
-        indexCol = col
-        indexRow = row
-        band = false
-        // OTRO
-        // while () vertical pa "bajo"
-        indexRow++
-        while (indexRow < size && state.getIn([indexRow, col]) === chip_name_b) {
-          indexRow++;
-          band = true
-        }
-        if (band && indexRow < size && state.getIn([indexRow, col]) === clearOption) {
-          state = state.setIn([indexRow, col], canMove)
-        }
-
-        //   while () vertical pa ""rriba""
-        indexCol = col
-        indexRow = row
-        band = false
-        indexRow--
-        while (indexRow >= 0 && state.getIn([indexRow, col]) === chip_name_b) {
-          indexRow--;
-          band = true
-        }
-        if (band && indexRow >= 0 && state.getIn([indexRow, col]) === clearOption) {
-          state = state.setIn([indexRow, col], canMove)
-        }
-
-        //OTRO
-        //   while () horizontal pa TRA
-        indexCol = col
-        indexRow = row
-        band = false
-        indexCol--
-        while (indexCol >= 0 && state.getIn([row, indexCol]) === chip_name_b) {
-          indexCol--;
-          band = true
-        }
-        if (band && indexCol >= 0 && state.getIn([row, indexCol]) === clearOption) {
-          state = state.setIn([row, indexCol], canMove)
-        }
+        nextState = validateDownRight(nextState, row, col, chip_name_b, size)
+        nextState = validateDownLeft(nextState, row, col, chip_name_b, size)
+        // nextState = validateUpBack(nextState, row, col, chip_name_b, size)
+        // nextState = validateUpRigth(nextState, row, col, chip_name_b, size)
+        // nextState = validateDown(nextState, row, col, chip_name_b, size)
+        // nextState = validateUp(nextState, row, col, chip_name_b, size)
+        // nextState = validateBack(nextState, row, col, chip_name_b, size)
+        // nextState = validateRigth(nextState, row, col, chip_name_b, size)
       }
     }
   }
 
-  let result = Board.set('state', state)
-  // printState(Board.set('state', state))
-  // console.log('\n')
+  let result = Board.set('state', nextState)
   return result
 }
 
@@ -487,5 +529,6 @@ module.exports = {
   clearOption,
   blanca,
   negra,
-  canMove
+  canMove,
+  setIn
 }
